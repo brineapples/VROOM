@@ -11,7 +11,6 @@ $tables = [
     'vehicles' => 'Vehicles',
     'service_types' => 'Service Types',
     'repair_orders' => 'Repair Orders',
-    'repair_order_services' => 'Assigned Services',
 ];
 
 if (has_role(['super_admin'])) {
@@ -27,7 +26,6 @@ $statStyles = [
     'Vehicles' => ['icon' => 'fas fa-car', 'tone' => 'magenta'],
     'Service Types' => ['icon' => 'fas fa-tools', 'tone' => 'purple'],
     'Repair Orders' => ['icon' => 'fas fa-clipboard-list', 'tone' => 'cyan'],
-    'Assigned Services' => ['icon' => 'fas fa-link', 'tone' => 'magenta'],
     'Accounts' => ['icon' => 'fas fa-user-cog', 'tone' => 'purple'],
 ];
 

@@ -12,7 +12,6 @@ DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `roles`;
 DROP TABLE IF EXISTS `service_types`;
 DROP TABLE IF EXISTS `customers`;
-DROP TABLE IF EXISTS `advisors`;
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE `roles` (
@@ -93,18 +92,13 @@ CREATE TABLE `service_types` (
 CREATE TABLE `repair_orders` (
   `repair_order_id` int NOT NULL AUTO_INCREMENT,
   `vehicle_id` int NOT NULL,
-  `advisor_user_id` int NOT NULL,
   `service_date` date NOT NULL,
   `problem_description` text DEFAULT NULL,
   `resolved_at` datetime DEFAULT NULL,
   PRIMARY KEY (`repair_order_id`),
   KEY `idx_repair_orders_vehicle_id` (`vehicle_id`),
-  KEY `idx_repair_orders_advisor_user_id` (`advisor_user_id`),
   KEY `idx_repair_orders_resolved_at` (`resolved_at`),
   CONSTRAINT `fk_repair_orders_vehicle` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`vehicle_id`)
-    ON UPDATE CASCADE
-    ON DELETE RESTRICT,
-  CONSTRAINT `fk_repair_orders_advisor_user` FOREIGN KEY (`advisor_user_id`) REFERENCES `users` (`user_id`)
     ON UPDATE CASCADE
     ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -140,8 +134,7 @@ CREATE TABLE `audit_logs` (
 
 INSERT INTO `roles` (`role_name`) VALUES
   ('super_admin'),
-  ('admin'),
-  ('advisor');
+  ('admin');
 
 INSERT INTO `users` (`role_id`, `full_name`, `username`, `password_hash`, `is_active`)
 SELECT `role_id`, 'Super Admin', 'superadmin', '$2y$12$Wha0w1F.tH7ck4TEI8q0Q.1B78CGchN46S0aGWNDv1NJ/74yI3Q0W', 1
@@ -152,8 +145,3 @@ INSERT INTO `users` (`role_id`, `full_name`, `username`, `password_hash`, `is_ac
 SELECT `role_id`, 'Admin User', 'admin', '$2y$12$Wha0w1F.tH7ck4TEI8q0Q.1B78CGchN46S0aGWNDv1NJ/74yI3Q0W', 1
 FROM `roles`
 WHERE `role_name` = 'admin';
-
-INSERT INTO `users` (`role_id`, `full_name`, `username`, `password_hash`, `is_active`)
-SELECT `role_id`, 'Service Advisor', 'advisor', '$2y$12$Wha0w1F.tH7ck4TEI8q0Q.1B78CGchN46S0aGWNDv1NJ/74yI3Q0W', 1
-FROM `roles`
-WHERE `role_name` = 'advisor';

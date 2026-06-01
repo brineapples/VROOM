@@ -115,6 +115,38 @@ $users = $pdo->query(
 
 render_header('Accounts');
 ?>
+<?php if ($errorMessage !== ''): ?>
+    <p><?php echo e($errorMessage); ?></p>
+<?php endif; ?>
+
+<h2>Account List</h2>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Full Name</th>
+        <th>Username</th>
+        <th>Role</th>
+        <th>Active</th>
+        <th>Actions</th>
+    </tr>
+    <?php foreach ($users as $user): ?>
+        <tr>
+            <td><?php echo e((string) $user['user_id']); ?></td>
+            <td><?php echo e($user['full_name']); ?></td>
+            <td><?php echo e($user['username']); ?></td>
+            <td><?php echo e($user['role_name']); ?></td>
+            <td><?php echo (int) $user['is_active'] === 1 ? 'Yes' : 'No'; ?></td>
+            <td>
+                <a href="users.php?edit=<?php echo e((string) $user['user_id']); ?>">Edit</a>
+                <form method="post">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="user_id" value="<?php echo e((string) $user['user_id']); ?>">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+</table>
 <h2><?php echo $editUser['user_id'] === '' ? 'Add Account' : 'Edit Account'; ?></h2>
 <form method="post">
     <input type="hidden" name="action" value="save">
@@ -154,38 +186,5 @@ render_header('Accounts');
         <a href="users.php">Clear Form</a>
     </p>
 </form>
-
-<?php if ($errorMessage !== ''): ?>
-    <p><?php echo e($errorMessage); ?></p>
-<?php endif; ?>
-
-<h2>Account List</h2>
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Full Name</th>
-        <th>Username</th>
-        <th>Role</th>
-        <th>Active</th>
-        <th>Actions</th>
-    </tr>
-    <?php foreach ($users as $user): ?>
-        <tr>
-            <td><?php echo e((string) $user['user_id']); ?></td>
-            <td><?php echo e($user['full_name']); ?></td>
-            <td><?php echo e($user['username']); ?></td>
-            <td><?php echo e($user['role_name']); ?></td>
-            <td><?php echo (int) $user['is_active'] === 1 ? 'Yes' : 'No'; ?></td>
-            <td>
-                <a href="users.php?edit=<?php echo e((string) $user['user_id']); ?>">Edit</a>
-                <form method="post">
-                    <input type="hidden" name="action" value="delete">
-                    <input type="hidden" name="user_id" value="<?php echo e((string) $user['user_id']); ?>">
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-</table>
 <?php
 render_footer();

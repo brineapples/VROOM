@@ -29,6 +29,23 @@
     --app-list-row-border: rgba(255, 255, 255, 0.03);
 }
 
+body.app-shell,
+body.app-auth-body {
+    animation: app-soft-fade 0.18s ease-out;
+}
+
+@keyframes app-soft-fade {
+    from {
+        opacity: 0.965;
+        filter: brightness(1.06);
+    }
+
+    to {
+        opacity: 1;
+        filter: brightness(1);
+    }
+}
+
 body.app-shell {
     min-width: 320px;
 }
@@ -58,6 +75,22 @@ body.app-auth-body {
     background: #0ea5e9;
 }
 
+.background::before,
+.orb,
+.glass-card,
+.glass-card-3d,
+.app-content > form,
+.app-auth-card,
+.stats-grid .glass-card,
+.content-grid .glass-card,
+.bottom-grid .glass-card {
+    animation: none !important;
+}
+
+.orb {
+    transform: none !important;
+}
+
 .user-avatar,
 .mobile-menu-toggle {
     background: linear-gradient(135deg, var(--app-blue), var(--app-blue-soft));
@@ -82,6 +115,11 @@ body.app-auth-body {
         var(--glass-bg);
 }
 
+.glass-card-3d,
+.glass-card-3d:hover {
+    transform: none !important;
+}
+
 .nav-link::before {
     content: "";
     position: absolute;
@@ -92,12 +130,15 @@ body.app-auth-body {
     transition: background var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+.nav-link {
+    border: 1px solid transparent;
+}
+
 .nav-link:hover,
 .nav-link.active {
     background: linear-gradient(135deg, rgba(37, 99, 235, 0.22), rgba(56, 189, 248, 0.12));
     border: 1px solid rgba(147, 197, 253, 0.2);
     color: var(--text-primary);
-    transform: translateX(2px);
 }
 
 .nav-link:hover::before,
@@ -280,6 +321,88 @@ body.app-auth-body {
     font-size: 13px;
 }
 
+.app-service-picker {
+    margin-bottom: 18px;
+    padding: 18px;
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    background: rgba(7, 21, 39, 0.3);
+}
+
+.app-service-picker-header {
+    display: grid;
+    gap: 4px;
+    margin-bottom: 14px;
+}
+
+.app-service-picker-header label {
+    margin: 0;
+}
+
+.app-service-picker-header span {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.app-service-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.app-service-option {
+    position: relative;
+    display: block;
+    padding: 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.app-service-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.app-service-check {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--app-line);
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.03);
+    transition: border-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast);
+    pointer-events: none;
+}
+
+.app-service-option input:checked + .app-service-check {
+    border-color: rgba(34, 197, 94, 0.4);
+    background: linear-gradient(135deg, rgba(20, 83, 45, 0.78), rgba(34, 197, 94, 0.26));
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
+}
+
+.app-service-copy {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 4px;
+}
+
+.app-service-copy strong {
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.app-service-copy small {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.app-service-option input:checked ~ .app-service-copy strong,
+.app-service-option input:checked ~ .app-service-copy small {
+    color: #dcfce7;
+}
+
 .app-status-panel {
     display: flex;
     align-items: center;
@@ -402,7 +525,6 @@ body.app-auth-body {
 .settings-select:focus {
     border-color: var(--app-blue-soft);
     box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.13);
-    transform: translateY(-1px);
 }
 
 .app-content textarea {
@@ -437,7 +559,6 @@ body.app-auth-body {
 .app-content form p a:hover {
     box-shadow: 0 16px 36px rgba(37, 99, 235, 0.36);
     filter: brightness(1.05);
-    transform: translateY(-2px);
 }
 
 .app-content button:disabled {
@@ -450,7 +571,6 @@ body.app-auth-body {
 .app-content button:disabled:hover {
     box-shadow: none;
     filter: grayscale(0.8);
-    transform: none;
 }
 
 .app-edit-actions {
@@ -765,7 +885,6 @@ body.app-auth-body {
 .app-auth-form button:hover {
     box-shadow: 0 18px 40px rgba(37, 99, 235, 0.38);
     filter: brightness(1.05);
-    transform: translateY(-2px);
 }
 
 .app-auth-note {
@@ -792,6 +911,11 @@ body.app-auth-body {
 }
 
 @media (max-width: 768px) {
+    .app-service-option {
+        grid-template-columns: 22px 1fr;
+        padding: 12px;
+    }
+
     .app-auth-page {
         padding: 20px;
     }

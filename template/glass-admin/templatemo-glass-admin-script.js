@@ -8,77 +8,6 @@
     'use strict';
 
     // ============================================
-    // 3D Tilt Effect
-    // ============================================
-    function initTiltEffect() {
-        document.querySelectorAll('.glass-card-3d').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                const rotateX = (y - centerY) / 20;
-                const rotateY = (centerX - x) / 20;
-                
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(10px)`;
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
-            });
-        });
-    }
-
-    // ============================================
-    // Animated Counters
-    // ============================================
-    function animateCounter(element, target, duration = 2000) {
-        const start = 0;
-        const startTime = performance.now();
-        
-        function update(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            
-            // Easing function
-            const easeOut = 1 - Math.pow(1 - progress, 3);
-            const current = Math.floor(start + (target - start) * easeOut);
-            
-            if (element.dataset.prefix) {
-                element.textContent = element.dataset.prefix + current.toLocaleString() + (element.dataset.suffix || '');
-            } else {
-                element.textContent = current.toLocaleString() + (element.dataset.suffix || '');
-            }
-            
-            if (progress < 1) {
-                requestAnimationFrame(update);
-            }
-        }
-        
-        requestAnimationFrame(update);
-    }
-
-    function initCounters() {
-        const counters = document.querySelectorAll('.stat-value');
-        counters.forEach(counter => {
-            const text = counter.textContent;
-            const value = parseInt(text.replace(/[^0-9]/g, ''));
-            
-            if (text.includes('$')) {
-                counter.dataset.prefix = '$';
-            }
-            if (text.includes('%')) {
-                counter.dataset.suffix = '%';
-            }
-            
-            animateCounter(counter, value);
-        });
-    }
-
-    // ============================================
     // Mobile Menu Toggle
     // ============================================
     function initMobileMenu() {
@@ -168,35 +97,6 @@
     }
 
     // ============================================
-    // Smooth Page Transitions
-    // ============================================
-    function initPageTransitions() {
-        const links = document.querySelectorAll('a[href$=".html"]');
-        
-        links.forEach(link => {
-            link.addEventListener('click', (e) => {
-                // Skip external links
-                if (link.hostname !== window.location.hostname) return;
-                
-                e.preventDefault();
-                const href = link.getAttribute('href');
-                
-                document.body.style.opacity = '0';
-                document.body.style.transition = 'opacity 0.3s ease';
-                
-                setTimeout(() => {
-                    window.location.href = href;
-                }, 300);
-            });
-        });
-
-        // Fade in on page load
-        window.addEventListener('load', () => {
-            document.body.style.opacity = '1';
-        });
-    }
-
-    // ============================================
     // Settings Tab Navigation
     // ============================================
     function initSettingsTabs() {
@@ -238,12 +138,9 @@
     // Initialize All Functions
     // ============================================
     function init() {
-        initTiltEffect();
-        initCounters();
         initMobileMenu();
         initFormValidation();
         initPasswordToggle();
-        initPageTransitions();
         initSettingsTabs();
     }
 

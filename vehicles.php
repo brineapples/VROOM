@@ -45,7 +45,7 @@ function find_or_create_vehicle_model(PDO $pdo, string $makeName, string $modelN
 }
 
 $pdo = get_pdo();
-$canManage = has_role(['super_admin', 'admin', 'advisor']);
+$canManage = has_role(['super_admin', 'admin']);
 $customers = $pdo->query('SELECT customer_id, customer_name FROM customers ORDER BY customer_name')->fetchAll();
 $editVehicle = [
     'vehicle_id' => '',
@@ -58,7 +58,7 @@ $editVehicle = [
 $errorMessage = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_role(['super_admin', 'admin', 'advisor']);
+    require_role(['super_admin', 'admin']);
 
     $action = $_POST['action'] ?? '';
 
@@ -148,45 +148,6 @@ $vehicles = $pdo->query(
 
 render_header('Vehicles');
 ?>
-<?php if ($canManage): ?>
-    <h2><?php echo $editVehicle['vehicle_id'] === '' ? 'Add Vehicle' : 'Edit Vehicle'; ?></h2>
-    <form method="post">
-        <input type="hidden" name="action" value="save">
-        <input type="hidden" name="vehicle_id" value="<?php echo e((string) $editVehicle['vehicle_id']); ?>">
-        <p>
-            <label for="customer_id">Customer</label><br>
-            <select name="customer_id" id="customer_id">
-                <option value="">Select a customer</option>
-                <?php foreach ($customers as $customer): ?>
-                    <option value="<?php echo e((string) $customer['customer_id']); ?>" <?php echo (string) $customer['customer_id'] === (string) $editVehicle['customer_id'] ? 'selected' : ''; ?>>
-                        <?php echo e($customer['customer_name']); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </p>
-        <p>
-            <label for="plate_number">Plate Number</label><br>
-            <input type="text" name="plate_number" id="plate_number" value="<?php echo e($editVehicle['plate_number']); ?>">
-        </p>
-        <p>
-            <label for="make">Make</label><br>
-            <input type="text" name="make" id="make" value="<?php echo e($editVehicle['make']); ?>">
-        </p>
-        <p>
-            <label for="model">Model</label><br>
-            <input type="text" name="model" id="model" value="<?php echo e($editVehicle['model']); ?>">
-        </p>
-        <p>
-            <label for="vehicle_year">Year</label><br>
-            <input type="number" name="vehicle_year" id="vehicle_year" value="<?php echo e((string) $editVehicle['vehicle_year']); ?>">
-        </p>
-        <p>
-            <button type="submit">Save Vehicle</button>
-            <a href="vehicles.php">Clear Form</a>
-        </p>
-    </form>
-<?php endif; ?>
-
 <?php if ($errorMessage !== ''): ?>
     <p><?php echo e($errorMessage); ?></p>
 <?php endif; ?>
@@ -225,6 +186,44 @@ render_header('Vehicles');
         </tr>
     <?php endforeach; ?>
 </table>
+<?php if ($canManage): ?>
+    <h2><?php echo $editVehicle['vehicle_id'] === '' ? 'Add Vehicle' : 'Edit Vehicle'; ?></h2>
+    <form method="post">
+        <input type="hidden" name="action" value="save">
+        <input type="hidden" name="vehicle_id" value="<?php echo e((string) $editVehicle['vehicle_id']); ?>">
+        <p>
+            <label for="customer_id">Customer</label><br>
+            <select name="customer_id" id="customer_id">
+                <option value="">Select a customer</option>
+                <?php foreach ($customers as $customer): ?>
+                    <option value="<?php echo e((string) $customer['customer_id']); ?>" <?php echo (string) $customer['customer_id'] === (string) $editVehicle['customer_id'] ? 'selected' : ''; ?>>
+                        <?php echo e($customer['customer_name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        </p>
+        <p>
+            <label for="plate_number">Plate Number</label><br>
+            <input type="text" name="plate_number" id="plate_number" value="<?php echo e($editVehicle['plate_number']); ?>">
+        </p>
+        <p>
+            <label for="make">Make</label><br>
+            <input type="text" name="make" id="make" value="<?php echo e($editVehicle['make']); ?>">
+        </p>
+        <p>
+            <label for="model">Model</label><br>
+            <input type="text" name="model" id="model" value="<?php echo e($editVehicle['model']); ?>">
+        </p>
+        <p>
+            <label for="vehicle_year">Year</label><br>
+            <input type="number" name="vehicle_year" id="vehicle_year" value="<?php echo e((string) $editVehicle['vehicle_year']); ?>">
+        </p>
+        <p>
+            <button type="submit">Save Vehicle</button>
+            <a href="vehicles.php">Clear Form</a>
+        </p>
+    </form>
+<?php endif; ?>
 <?php
 render_footer();
 

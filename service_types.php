@@ -96,30 +96,6 @@ $serviceTypes = $pdo->query(
 
 render_header('Service Types');
 ?>
-<?php if ($canManage): ?>
-    <h2><?php echo $editServiceType['service_type_id'] === '' ? 'Add Service Type' : 'Edit Service Type'; ?></h2>
-    <form method="post">
-        <input type="hidden" name="action" value="save">
-        <input type="hidden" name="service_type_id" value="<?php echo e((string) $editServiceType['service_type_id']); ?>">
-        <p>
-            <label for="service_name">Service Name</label><br>
-            <input type="text" name="service_name" id="service_name" value="<?php echo e($editServiceType['service_name']); ?>">
-        </p>
-        <p>
-            <label for="standard_hours">Standard Hours</label><br>
-            <input type="number" step="0.01" name="standard_hours" id="standard_hours" value="<?php echo e((string) $editServiceType['standard_hours']); ?>">
-        </p>
-        <p>
-            <label for="hourly_rate">Hourly Rate (PHP)</label><br>
-            <input type="number" step="0.01" name="hourly_rate" id="hourly_rate" value="<?php echo e((string) $editServiceType['hourly_rate']); ?>">
-        </p>
-        <p>
-            <button type="submit">Save Service Type</button>
-            <a href="service_types.php">Clear Form</a>
-        </p>
-    </form>
-<?php endif; ?>
-
 <?php if ($errorMessage !== ''): ?>
     <p><?php echo e($errorMessage); ?></p>
 <?php endif; ?>
@@ -154,6 +130,29 @@ render_header('Service Types');
         </tr>
     <?php endforeach; ?>
 </table>
+<?php if ($canManage): ?>
+    <h2><?php echo $editServiceType['service_type_id'] === '' ? 'Add Service Type' : 'Edit Service Type'; ?></h2>
+    <form method="post">
+        <input type="hidden" name="action" value="save">
+        <input type="hidden" name="service_type_id" value="<?php echo e((string) $editServiceType['service_type_id']); ?>">
+        <p>
+            <label for="service_name">Service Name</label><br>
+            <input type="text" name="service_name" id="service_name" value="<?php echo e($editServiceType['service_name']); ?>">
+        </p>
+        <p>
+            <label for="standard_hours">Standard Hours</label><br>
+            <input type="number" step="0.01" name="standard_hours" id="standard_hours" value="<?php echo e((string) $editServiceType['standard_hours']); ?>">
+        </p>
+        <p>
+            <label for="hourly_rate">Hourly Rate (PHP)</label><br>
+            <input type="number" step="0.01" name="hourly_rate" id="hourly_rate" value="<?php echo e((string) $editServiceType['hourly_rate']); ?>">
+        </p>
+        <p>
+            <button type="submit">Save Service Type</button>
+            <a href="service_types.php">Clear Form</a>
+        </p>
+    </form>
+<?php endif; ?>
 <?php
 render_footer();
 

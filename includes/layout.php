@@ -93,7 +93,6 @@ function render_header(string $title): void
                             <?php echo nav_link('vehicles.php', 'fas fa-car', 'Vehicles'); ?>
                             <?php echo nav_link('service_types.php', 'fas fa-tools', 'Service Types'); ?>
                             <?php echo nav_link('repair_orders.php', 'fas fa-clipboard-list', 'Repair Orders'); ?>
-                            <?php echo nav_link('repair_order_services.php', 'fas fa-link', 'Order Services'); ?>
                         <?php endif; ?>
                     </ul>
                 </li>
