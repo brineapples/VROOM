@@ -1,0 +1,68 @@
+erDiagram
+    ROLES {
+        int role_id PK
+        varchar role_name UK
+    }
+
+    USERS {
+        int user_id PK
+        int role_id FK
+        varchar full_name
+        varchar username UK
+        varchar password_hash
+        boolean is_active
+        datetime created_at
+    }
+
+    CUSTOMERS {
+        int customer_id PK
+        varchar customer_name
+        varchar phone
+    }
+
+    VEHICLES {
+        int vehicle_id PK
+        int customer_id FK
+        varchar plate_number UK
+        varchar make
+        varchar model
+        int vehicle_year
+    }
+
+    SERVICE_TYPES {
+        int service_type_id PK
+        varchar service_name UK
+        decimal standard_hours
+        decimal hourly_rate
+    }
+
+    REPAIR_ORDERS {
+        int repair_order_id PK
+        int vehicle_id FK
+        int advisor_user_id FK
+        date service_date
+        text problem_description
+    }
+
+    REPAIR_ORDER_SERVICES {
+        int repair_order_id PK, FK
+        int service_type_id PK, FK
+    }
+
+    AUDIT_LOGS {
+        int audit_log_id PK
+        int user_id FK
+        varchar action_name
+        varchar table_name
+        int record_id
+        text details
+        datetime logged_at
+    }
+
+    ROLES ||--o{ USERS : assigns
+    CUSTOMERS ||--o{ VEHICLES : owns
+    VEHICLES ||--o{ REPAIR_ORDERS : receives
+    USERS ||--o{ REPAIR_ORDERS : writes
+    REPAIR_ORDERS ||--o{ REPAIR_ORDER_SERVICES : includes
+    SERVICE_TYPES ||--o{ REPAIR_ORDER_SERVICES : defines
+    USERS ||--o{ AUDIT_LOGS : creates

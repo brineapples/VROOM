@@ -1,0 +1,12 @@
+/vendor/
+/node_modules/
+/.env
+/.env.*
+/composer.lock
+/package-lock.json
+/yarn.lock
+/dist/
+/build/
+/.idea/
+/.vscode/
+*.log
