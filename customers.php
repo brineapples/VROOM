@@ -47,13 +47,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'delete') {
             $customerId = (int) ($_POST['customer_id'] ?? 0);
+
+            if ($customerId <= 0) {
+                throw new RuntimeException('Customer is required.');
+            }
+
+            $pdo->beginTransaction();
+
+            $vehicleIdsStatement = $pdo->prepare(
+                'SELECT vehicle_id
+                 FROM vehicles
+                 WHERE customer_id = ?'
+            );
+            $vehicleIdsStatement->execute([$customerId]);
+            $vehicleIds = array_map('intval', $vehicleIdsStatement->fetchAll(PDO::FETCH_COLUMN));
+
+            if ($vehicleIds !== []) {
+                $placeholders = implode(',', array_fill(0, count($vehicleIds), '?'));
+
+                $deleteRepairOrdersStatement = $pdo->prepare(
+                    "DELETE FROM repair_orders
+                     WHERE vehicle_id IN ($placeholders)"
+                );
+                $deleteRepairOrdersStatement->execute($vehicleIds);
+
+                $deleteVehiclesStatement = $pdo->prepare(
+                    "DELETE FROM vehicles
+                     WHERE vehicle_id IN ($placeholders)"
+                );
+                $deleteVehiclesStatement->execute($vehicleIds);
+            }
+
             $statement = $pdo->prepare('DELETE FROM customers WHERE customer_id = ?');
             $statement->execute([$customerId]);
-            write_audit_log($pdo, current_user()['user_id'], 'delete', 'customers', $customerId, 'Deleted customer.');
+
+            $pdo->commit();
+
+            write_audit_log($pdo, current_user()['user_id'], 'delete', 'customers', $customerId, 'Deleted customer and related vehicle records.');
             set_flash('Customer deleted.');
             redirect('customers.php');
         }
     } catch (Throwable $exception) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
         $errorMessage = $exception->getMessage();
     }
 }

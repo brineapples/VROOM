@@ -333,7 +333,11 @@ render_header('Repair Orders');
             <td><?php echo e($repairOrder['customer_name']); ?></td>
             <td><?php echo e($repairOrder['plate_number']); ?></td>
             <td><?php echo e($repairOrder['service_names'] ?: 'No services assigned'); ?></td>
-            <td><?php echo e($repairOrder['problem_description']); ?></td>
+            <td>
+                <span class="app-clamp-text" title="<?php echo e($repairOrder['problem_description'] ?? ''); ?>">
+                    <?php echo e($repairOrder['problem_description']); ?>
+                </span>
+            </td>
             <td>
                 <span class="app-status-badge <?php echo e($status['key']); ?>"><?php echo e($status['label']); ?></span>
             </td>

@@ -107,13 +107,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'delete') {
             $vehicleId = (int) ($_POST['vehicle_id'] ?? 0);
+
+            if ($vehicleId <= 0) {
+                throw new RuntimeException('Vehicle is required.');
+            }
+
+            $pdo->beginTransaction();
+
+            $deleteRepairOrdersStatement = $pdo->prepare(
+                'DELETE FROM repair_orders
+                 WHERE vehicle_id = ?'
+            );
+            $deleteRepairOrdersStatement->execute([$vehicleId]);
+
             $statement = $pdo->prepare('DELETE FROM vehicles WHERE vehicle_id = ?');
             $statement->execute([$vehicleId]);
-            write_audit_log($pdo, current_user()['user_id'], 'delete', 'vehicles', $vehicleId, 'Deleted vehicle.');
+
+            $pdo->commit();
+
+            write_audit_log($pdo, current_user()['user_id'], 'delete', 'vehicles', $vehicleId, 'Deleted vehicle and related repair orders.');
             set_flash('Vehicle deleted.');
             redirect('vehicles.php');
         }
     } catch (Throwable $exception) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
         $errorMessage = $exception->getMessage();
     }
 }

@@ -63,13 +63,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($action === 'delete') {
             $serviceTypeId = (int) ($_POST['service_type_id'] ?? 0);
+
+            if ($serviceTypeId <= 0) {
+                throw new RuntimeException('Service type is required.');
+            }
+
+            $pdo->beginTransaction();
+
+            $repairOrderIdsStatement = $pdo->prepare(
+                'SELECT DISTINCT repair_order_id
+                 FROM repair_order_services
+                 WHERE service_type_id = ?'
+            );
+            $repairOrderIdsStatement->execute([$serviceTypeId]);
+            $repairOrderIds = array_map('intval', $repairOrderIdsStatement->fetchAll(PDO::FETCH_COLUMN));
+
+            $deleteLinksStatement = $pdo->prepare(
+                'DELETE FROM repair_order_services
+                 WHERE service_type_id = ?'
+            );
+            $deleteLinksStatement->execute([$serviceTypeId]);
+
+            if ($repairOrderIds !== []) {
+                $placeholders = implode(',', array_fill(0, count($repairOrderIds), '?'));
+                $resetRepairOrdersStatement = $pdo->prepare(
+                    "UPDATE repair_orders
+                     SET resolved_at = NULL
+                     WHERE repair_order_id IN ($placeholders)"
+                );
+                $resetRepairOrdersStatement->execute($repairOrderIds);
+            }
+
             $statement = $pdo->prepare('DELETE FROM service_types WHERE service_type_id = ?');
             $statement->execute([$serviceTypeId]);
-            write_audit_log($pdo, current_user()['user_id'], 'delete', 'service_types', $serviceTypeId, 'Deleted service type.');
+
+            $pdo->commit();
+
+            write_audit_log($pdo, current_user()['user_id'], 'delete', 'service_types', $serviceTypeId, 'Deleted service type and related repair order links.');
             set_flash('Service type deleted.');
             redirect('service_types.php');
         }
     } catch (Throwable $exception) {
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
         $errorMessage = $exception->getMessage();
     }
 }
